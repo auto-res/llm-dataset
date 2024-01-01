@@ -1,21 +1,26 @@
 from .dataset.gsm8k import gsm8k_dataset
+from .dataset.multiarith import multiarith_dataset
 import random
 
 
-class LLMdatasets:
+class LLMdataset:
     def __init__(
         self,
         dataset_name = None
         ):
         self.dataset_name = dataset_name
         if self.dataset_name:
-            self.num_data, self.dataset = self._select_dataset()
+            self.num_data, self.data_types, self.dataset = self._select_dataset()
             print(f"Number of data:{self.num_data}")
+            print(f"Data types:{self.data_types}")
 
     def _select_dataset(self):
         if self.dataset_name == 'gsm8k':
-            count, dataset = gsm8k_dataset(data_type='train')
-            return count, dataset
+            count, data_types, dataset = gsm8k_dataset(data_type='train')
+            return count, data_types, dataset
+        elif self.dataset_name == 'multiarith':
+            count, data_types, dataset = multiarith_dataset(data_type='train')
+            return count, data_types, dataset
 
     def dataloader(self, batch_size=1, seed=None, max_data=5):
         if seed is not None:
