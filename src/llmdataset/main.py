@@ -1,5 +1,5 @@
-from .dataset.gsm8k import gsm8k_dataset
-from .dataset.multiarith import multiarith_dataset
+from .dataset.gsm8k import gsm8k_dataset, gsm8k_split
+from .dataset.multiarith import multiarith_dataset, multiarith_split
 import random
 
 
@@ -10,19 +10,31 @@ class LLMdataset:
         ):
         self.dataset_name = dataset_name
         if self.dataset_name:
-            self.num_data, self.data_types, self.dataset = self._select_dataset()
-            print(f"Number of data:{self.num_data}")
-            print(f"Data types:{self.data_types}")
+            data_types, data_count, self.dataset = self._select_dataset()
+            print(f"Data types:{data_types}")
+            print(f"Number of data:{data_count}")
 
     def _select_dataset(self):
         if self.dataset_name == 'gsm8k':
-            count, data_types, dataset = gsm8k_dataset(data_type='train')
-            return count, data_types, dataset
+            data_types, data_count, dataset = gsm8k_dataset()
+            return data_types, data_count, dataset
         elif self.dataset_name == 'multiarith':
-            count, data_types, dataset = multiarith_dataset(data_type='train')
-            return count, data_types, dataset
+            data_types, data_count, dataset = multiarith_dataset()
+            return data_types, data_count, dataset
 
-    def dataloader(self, batch_size=1, seed=None, max_data=5):
+
+    def _split_dataset(self, data_type):
+        if self.dataset_name == 'gsm8k':
+            data_list = gsm8k_split(self.dataset, data_type)
+            return data_list
+        elif self.dataset_name == 'multiarith':
+            data_list = multiarith_split(self.dataset, data_type)
+            return data_list
+
+
+    def dataloader(self, data_type = None, batch_size=1, seed=None, max_data=5):
+        self.data_list, self.num_data = self._split_dataset(data_type)
+
         if seed is not None:
             random.seed(seed)
 
@@ -31,7 +43,7 @@ class LLMdataset:
             raise ValueError(f"max_data ({max_data}) cannot be greater than the size of the dataset ({self.num_data}).")
 
         if max_data is not None:
-            data_list = random.sample(self.dataset, max_data)
+            data_list = random.sample(self.data_list, max_data)
         else:
             data_list = self.dataset[:max_data]
 

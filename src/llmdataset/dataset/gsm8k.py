@@ -1,15 +1,33 @@
-from datasets import load_dataset
+from datasets import load_dataset, concatenate_datasets
 
-def gsm8k_dataset(data_type='train'):
+def gsm8k_dataset():
     try:
-        dataset = load_dataset("gsm8k", "main", split=data_type)
+        dataset = load_dataset("gsm8k", "main")
 
         # データセットのサイズをカウント
-        count = len(dataset)
-        data_list = [[example['question'], example['answer'].split('#### ')[1]] for example in dataset]
+        train_data_count = len(dataset['train'])
+        test_data_count = len(dataset['test'])
         data_types = ['train','test']
-        return count, data_types, data_list
+        data_count = [train_data_count, test_data_count]
+        return data_types, data_count, dataset
 
     except Exception as e:
         print(f"Error occurred: {e}")
         return None
+
+def gsm8k_split(dataset, data_type):
+    if data_type == 'train':
+        all_dataset = dataset['train']
+        num_data = len(all_dataset)
+    elif data_type == 'test':
+        all_dataset = dataset['test']
+        num_data = len(all_dataset)
+    else:
+        train_dataset = dataset['train']
+        test_dataset = dataset['test']
+        all_dataset = concatenate_datasets([train_dataset, test_dataset])
+        num_data = len(all_dataset)
+
+    data_list = [[example['question'], example['answer'].split('#### ')[1]] for example in all_dataset]
+
+    return data_list, num_data
