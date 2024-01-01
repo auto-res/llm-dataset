@@ -1,10 +1,9 @@
 [tool.poetry]
-name = "llm-dataset"
+name = "llmdataset"
 version = "0.1.0"
-description = ""
+description = "llm dataset"
 authors = ["toma tanaka <ulti4929@gmail.com>"]
 readme = "README.md"
-packages = [{include = "llm_dataset"}]
 
 [tool.poetry.dependencies]
 python = "^3.9"
