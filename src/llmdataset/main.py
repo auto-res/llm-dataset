@@ -1,38 +1,36 @@
-from .dataset.gsm8k import gsm8k_dataset, gsm8k_split
-from .dataset.multiarith import multiarith_dataset, multiarith_split
+from .dataset.gsm8k import gsm8k_split
+from .dataset.multiarith import multiarith_split
+from .dataset.bigbenchhard import bbh_split
 import random
-
+from .dataset.base import base_load_dataset
 
 class LLMdataset:
     def __init__(
         self,
-        dataset_name = None
+        dataset_name = None,
+        subset = None
         ):
         self.dataset_name = dataset_name
-        if self.dataset_name:
-            data_types, data_count, self.dataset = self._select_dataset()
-            print(f"Data types:{data_types}")
-            print(f"Number of data:{data_count}")
-
-    def _select_dataset(self):
-        if self.dataset_name == 'gsm8k':
-            data_types, data_count, dataset = gsm8k_dataset()
-            return data_types, data_count, dataset
-        elif self.dataset_name == 'multiarith':
-            data_types, data_count, dataset = multiarith_dataset()
-            return data_types, data_count, dataset
+        self.subset = subset
+        self.keys_list, count_list, self.dataset = base_load_dataset(self.dataset_name, self.subset)
+        print(f"Data types:{self.keys_list}")
+        print(f"Number of data:{count_list}")
 
 
     def _split_dataset(self, data_type):
         if self.dataset_name == 'gsm8k':
-            data_list = gsm8k_split(self.dataset, data_type)
-            return data_list
-        elif self.dataset_name == 'multiarith':
-            data_list = multiarith_split(self.dataset, data_type)
-            return data_list
+            data_list, num_data = gsm8k_split(self.dataset, data_type, self.keys_list)
+            return data_list, num_data
+        elif self.dataset_name == "ChilleD/MultiArith":
+            data_list, num_data = multiarith_split(self.dataset, data_type, self.keys_list)
+            return data_list, num_data
+        elif self.dataset_name == "lukaemon/bbh":
+            data_list, num_data = bbh_split(self.dataset, data_type, self.keys_list)
+        else:
+            raise ValueError(f"Unsupported dataset name: {self.dataset_name}")
 
 
-    def dataloader(self, data_type = None, batch_size=1, seed=None, max_data=5):
+    def dataloader(self, data_type=None, batch_size=1, seed=None, max_data=5):
         self.data_list, self.num_data = self._split_dataset(data_type)
 
         if seed is not None:
