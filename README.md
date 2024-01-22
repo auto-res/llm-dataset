@@ -11,7 +11,7 @@ pip install llmdataset
 from llmdataset import LLMdataset
 
 llmdataset = LLMdataset(
-    dataset_name="ChilleD/MultiArith",  # Name of the Dataset on the HuggingFace
+    dataset_name="gsm8k",  # Name of the Dataset on the HuggingFace
     subset="main"　# If the dataset requires the input of a subset, please specify it.
     )
 ```
