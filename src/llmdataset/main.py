@@ -21,7 +21,10 @@ class LLMdataset:
         ):
         self.dataset_name = dataset_name
         self.subset = subset
-        self.keys_list, count_list, self.dataset = base_load_dataset(self.dataset_name, self.subset)
+        self.keys_list, count_list, self.dataset = base_load_dataset(
+            self.dataset_name,
+            self.subset
+            )
         print(f"Data types:{self.keys_list}")
         print(f"Number of data:{count_list}")
 
@@ -44,10 +47,18 @@ class LLMdataset:
             data_list, num_data = gsmhard_split(self.dataset, data_type, self.keys_list)
             return data_list, num_data
         elif self.dataset_name == "wikitablequestions":
-            data_list, num_data = wikitq_split(self.dataset, data_type, self.keys_list)
+            data_list, num_data = wikitq_split(
+                self.dataset,
+                data_type,
+                self.keys_list
+                )
             return data_list, num_data
         elif self.dataset_name == "ChilleD/StrategyQA":
-            data_list, num_data = strategyqa_split(self.dataset, data_type, self.keys_list)
+            data_list, num_data = strategyqa_split(
+                self.dataset,
+                data_type,
+                self.keys_list
+                )
             return data_list, num_data
         elif self.dataset_name == "allenai/ai2_arc":
             data_list, num_data = arc_split(self.dataset, data_type, self.keys_list)
@@ -78,7 +89,10 @@ class LLMdataset:
             random.seed(seed)
 
         if max_data is not None and max_data > self.num_data:
-            raise ValueError(f"max_data ({max_data}) cannot be greater than the size of the dataset ({self.num_data}).")
+            raise ValueError(
+                f"max_data ({max_data}) cannot be greater than the size"
+                f"of the dataset ({self.num_data})."
+                )
 
         if max_data is not None:
             data_list = random.sample(self.data_list, max_data)
