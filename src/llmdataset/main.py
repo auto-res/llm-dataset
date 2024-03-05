@@ -31,7 +31,11 @@ class LLMdataset:
             data_list, num_data = gsm8k_split(self.dataset, data_type, self.keys_list)
             return data_list, num_data
         elif self.dataset_name == "ChilleD/MultiArith":
-            data_list, num_data = multiarith_split(self.dataset, data_type, self.keys_list)
+            data_list, num_data = multiarith_split(
+                self.dataset,
+                data_type,
+                self.keys_list
+                )
             return data_list, num_data
         elif self.dataset_name == "lukaemon/bbh":
             data_list, num_data = bbh_split(self.dataset, data_type, self.keys_list)
